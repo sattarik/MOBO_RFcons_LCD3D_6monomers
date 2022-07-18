@@ -1,90 +1,96 @@
-# Welcome to GitHub
+<img width="400" src="docs/source/_static/logo.png">
 
-Welcome to GitHub—where millions of developers work together on software. Ready to get started? Let’s learn how this all works by building and publishing your first GitHub Pages website!
+![Platform](https://img.shields.io/badge/platform-windows|macos|linux-lightgrey) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) 
 
-## Repositories
+**AutoOED: Automated Optimal Experimental Design Platform**
 
-Right now, we’re in your first GitHub **repository**. A repository is like a folder or storage space for your project. Your project's repository contains all its files such as code, documentation, images, and more. It also tracks every change that you—or your collaborators—make to each file, so you can always go back to previous versions of your project if you make any mistakes.
+**[Paper](https://arxiv.org/abs/2104.05959) | [Website](https://autooed.org) | [Documentation](https://autooed.readthedocs.io) | [Contact](mailto:autooed@csail.mit.edu)** 
 
-This repository contains three important files: The HTML code for your first website on GitHub, the CSS stylesheet that decorates your website with colors and fonts, and the **README** file. It also contains an image folder, with one image file.
+AutoOED is an optimal experimental design platform powered with automated machine learning to accelerate the discovery of optimal solutions. Our platform solves multi-objective optimization problems and automatically guides the design of experiment to be evaluated. 
 
-## Describe your project
+*NOTE: The paper and the documentation are slightly outdated. The descriptions may differ from the latest version of the software. We will update them soon.*
 
-You are currently viewing your project's **README** file. **_README_** files are like cover pages or elevator pitches for your project. They are written in plain text or [Markdown language](https://guides.github.com/features/mastering-markdown/), and usually include a paragraph describing the project, directions on how to use it, who authored it, and more.
+## Overview
 
-[Learn more about READMEs](https://help.github.com/en/articles/about-readmes)
+AutoOED is a powerful and easy-to-use tool written in Python for design parameter optimization with multiple objectives, which can be used for any kind of experiment settings (chemistry, material, physics, engineering, computer science…). AutoOED aims at improving the sample efficiency of optimization problems, i.e., using less number of samples to achieve the best performance, by applying state-of-the-art machine learning approaches, which is most powerful when the performance evaluation of your problem is expensive (for example, in terms of time or money). 
 
-## Your first website
+One of the most important features of AutoOED is an intuitive graphical user interface (GUI), which is provided to visualize and guide the experiments for users with little or no experience with coding, machine learning, or optimization. Furthermore, a distributed system is integrated to enable parallelized experimental evaluations by multiple processes on a single computer.
 
-**GitHub Pages** is a free and easy way to create a website using the code that lives in your GitHub repositories. You can use GitHub Pages to build a portfolio of your work, create a personal website, or share a fun project that you coded with the world. GitHub Pages is automatically enabled in this repository, but when you create new repositories in the future, the steps to launch a GitHub Pages website will be slightly different.
+<p>
+   	<img width="49%" src="docs/source/_static/manual/run-optimization/auto_control.png">
+    <img width="49%" src="docs/source/_static/manual/database/database.png">
+</p>
 
-[Learn more about GitHub Pages](https://pages.github.com/)
+## Installation
 
-## Rename this repository to publish your site
+AutoOED can be installed either directly from the links to the executable files, or from source code. AutoOED generally works across all Windows/MacOS/Linux operating systems. After installation, there are some extra steps to take if you want to link your own evaluation programs to AutoOED for fully automatic experimentation.
 
-We've already set-up a GitHub Pages website for you, based on your personal username. This repository is called `hello-world`, but you'll rename it to: `username.github.io`, to match your website's URL address. If the first part of the repository doesn’t exactly match your username, it won’t work, so make sure to get it right.
 
-Let's get started! To update this repository’s name, click the `Settings` tab on this page. This will take you to your repository’s settings page. 
+### Executable files
 
-![repo-settings-image](https://user-images.githubusercontent.com/18093541/63130482-99e6ad80-bf88-11e9-99a1-d3cf1660b47e.png)
+[**Windows**](https://drive.google.com/file/d/1bAPK3HPPxwXy1k-epYXmL5HgW7KkJigi/view) (Install using AutoOED-Setup.exe)
 
-Under the **Repository Name** heading, type: `username.github.io`, where username is your username on GitHub. Then click **Rename**—and that’s it. When you’re done, click your repository name or browser’s back button to return to this page.
+[**MacOS**](https://drive.google.com/file/d/1-XkUYi9M21gZ5bpsYAVbINJoYC7THu_U/view) (Install using AutoOED.dmg)
 
-<img width="1039" alt="rename_screenshot" src="https://user-images.githubusercontent.com/18093541/63129466-956cc580-bf85-11e9-92d8-b028dd483fa5.png">
+[**Linux**](https://drive.google.com/file/d/1fOF636a4fsKXBT3mZzjxh7lhghMc2jX5/view) (Unzip and find the executable at AutoOED_{version}/AutoOED_{version})
 
-Once you click **Rename**, your website will automatically be published at: https://your-username.github.io/. The HTML file—called `index.html`—is rendered as the home page and you'll be making changes to this file in the next step.
 
-Congratulations! You just launched your first GitHub Pages website. It's now live to share with the entire world
+### Source code
 
-## Making your first edit
+#### Step 1: General (Required)
 
-When you make any change to any file in your project, you’re making a **commit**. If you fix a typo, update a filename, or edit your code, you can add it to GitHub as a commit. Your commits represent your project’s entire history—and they’re all saved in your project’s repository.
-
-With each commit, you have the opportunity to write a **commit message**, a short, meaningful comment describing the change you’re making to a file. So you always know exactly what changed, no matter when you return to a commit.
-
-## Practice: Customize your first GitHub website by writing HTML code
-
-Want to edit the site you just published? Let’s practice commits by introducing yourself in your `index.html` file. Don’t worry about getting it right the first time—you can always build on your introduction later.
-
-Let’s start with this template:
+Install by conda with pip:
 
 ```
-<p>Hello World! I’m [username]. This is my website!</p>
+conda env create -f environment.yml
+conda activate autooed
+pip install -r requirements_extra.txt
 ```
 
-To add your introduction, copy our template and click the edit pencil icon at the top right hand corner of the `index.html` file.
-
-<img width="997" alt="edit-this-file" src="https://user-images.githubusercontent.com/18093541/63131820-0794d880-bf8d-11e9-8b3d-c096355e9389.png">
-
-
-Delete this placeholder line:
+Or install purely by pip:
 
 ```
-<p>Welcome to your first GitHub Pages website!</p>
+pip install -r requirements.txt
+pip install -r requirements_extra.txt
 ```
 
-Then, paste the template to line 15 and fill in the blanks.
+*Note: If you cannot properly run the programs after installation, please check if the version of these packages match our specifications.*
 
-<img width="1032" alt="edit-githuboctocat-index" src="https://user-images.githubusercontent.com/18093541/63132339-c3a2d300-bf8e-11e9-8222-59c2702f6c42.png">
+#### Step 2: Custom Evaluation Programs (Optional)
 
+There is some more work to do if you want to link your own evaluation programs to AutoOED to achieve fully automated experimentation, please see our documentation for more details.
 
-When you’re done, scroll down to the `Commit changes` section near the bottom of the edit page. Add a short message explaining your change, like "Add my introduction", then click `Commit changes`.
+## Getting Started
 
+After installation, please run the following command to start AutoOED with the GUI.
 
-<img width="1030" alt="add-my-username" src="https://user-images.githubusercontent.com/18093541/63131801-efbd5480-bf8c-11e9-9806-89273f027d16.png">
+```bash
+python run_gui.py
+```
 
-Once you click `Commit changes`, your changes will automatically be published on your GitHub Pages website. Refresh the page to see your new changes live in action.
+For more detailed usage and information of AutoOED, please checkout our documentation.
 
-:tada: You just made your first commit! :tada:
+## Citation
 
-## Extra Credit: Keep on building!
+If you find our work helpful to your research, please consider citing our [paper](https://arxiv.org/abs/2104.05959).
 
-Change the placeholder Octocat gif on your GitHub Pages website by [creating your own personal Octocat emoji](https://myoctocat.com/build-your-octocat/) or [choose a different Octocat gif from our logo library here](https://octodex.github.com/). Add that image to line 12 of your `index.html` file, in place of the `<img src=` link.
+```
+@misc{tian2021autooed,
+    title={AutoOED: Automated Optimal Experiment Design Platform},
+    author={Yunsheng Tian and Mina Konaković Luković and Timothy Erps and Michael Foshey and Wojciech Matusik},
+    year={2021},
+    eprint={2104.05959},
+    archivePrefix={arXiv},
+    primaryClass={cs.AI}
+}
+```
 
-Want to add even more code and fun styles to your GitHub Pages website? [Follow these instructions](https://github.com/github/personal-website) to build a fully-fledged static website.
+## Contributing
 
-![octocat](./images/create-octocat.png)
+We highly welcome all kinds of contributions, including but not limited to bug fixes, new feature suggestions, more intuitive error messages, and so on.
 
-## Everything you need to know about GitHub
+Especially, [the algorithmic part](https://github.com/yunshengtian/AutoOED/tree/master/algorithm/mobo) of our code repository is written in a clean and modular way, facilitating extensions and tailoring the code, serving as a testbed for machine learning researchers to easily develop and evaluate their own multi-objective Bayesian optimization algorithms. We are looking forward to supporting more powerful optimization algorithms on our platform.
 
-Getting started is the hardest part. If there’s anything you’d like to know as you get started with GitHub, try searching [GitHub Help](https://help.github.com). Our documentation has tutorials on everything from changing your repository settings to configuring GitHub from your command line.
+## Contact
+
+If you experience any issues during installing or using the software, or if you want to contribute to AutoOED, please feel free to reach out to us either by creating issues on GitHub or sending emails to autooed@csail.mit.edu.
