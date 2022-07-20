@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from scipy.spatial import Delaunay
 from copy import deepcopy
-from pygco import cut_from_graph
+#from pygco import cut_from_graph
 
 from autooed.mobo.solver.pareto_discovery.utils import generate_weights_batch
 
