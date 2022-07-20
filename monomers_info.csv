@@ -1,7 +1,7 @@
-,MW,xlogp3,Hbond_donor,Hbond_acceptor,Rot_bond,polar_surface_area,HA,complexity,dft_sp_E_RB3LYP
-R1(HA),222.24,1.8,1,4,7,55.8,16,221,-766.6
-R2(IA),184.27,4.2,1,2,1,37.3,5,55.9,-581.7
-R3(NVP),111.14,0.4,0,1,1,20.3,8,120,-364
-R4(AA),72.06,0.3,1,2,1,37.3,5,55.9,-267.2
-R5(HEAA),115.3,-0.6,2,2,3,49.3,8,90.4,-401.2
-R6(IBOA),208.3,3.9,0,2,3,26.3,15,306,-657.9
+,SMILES,MW_gpermol,density_gpermL,molar_volume_cm3permol,F_di,F_pi,E_hi,,xlogp3,Hbond_donor,Hbond_acceptor,Rot_bond,polar_surface_area,HA,complexity,dft_sp_E_RB3LYP
+R1(HA),C=CC(=O)OCC(COC1=CC=CC=C1)O,222.24,1.16,191.586206896552,,,,,1.8,1,4,7,55.8,16,221,-766.6
+R2(IA),CC(C)CCCCCOC(=O)C=C,184.27,0.88,209.397727272727,,,,,4.2,1,2,1,37.3,5,55.9,-581.7
+R3(NVP),C=CN1CCCC1=O,111.14,1.04,106.865384615385,,,,,0.4,0,1,1,20.3,8,120,-364
+R4(AA),C=CC(=O)O,72.06,1.051,68.56,,,,,0.3,1,2,1,37.3,5,55.9,-267.2
+R5(HEAA),C=CC(=O)NCCO,115.3,1.111,103.780378037804,,,,,-0.6,2,2,3,49.3,8,90.4,-401.2
+R6(IBOA),CC1(C2CCC1(C(C2)OC(=O)C=C)C)C,208.3,0.986,211.257606490872,,,,,3.9,0,2,3,26.3,15,306,-657.9
