@@ -15,7 +15,7 @@ class printing3d(Problem):
         'type': 'continuous',
         'n_var': 5,
         'n_obj': 2,
-        'n_constr':2,
+        'n_constr': 2,
         'var_lb': [0, 0, 0, 0, 0],
         'var_ub': [1, 1, 1, 1, 1]
     }
@@ -57,9 +57,11 @@ class printing3d_dlp(printing3d):
         f = []
 
         for i in range(0, self.n_obj):
+            
             _f = float (input (
             "ratios A-F {} sum {} Enter objective {}: ".
              format(np.round(x_,2), np.sum(np.round(x_,2)), i)))
+             
             _f = -_f
 
             f.append(_f)

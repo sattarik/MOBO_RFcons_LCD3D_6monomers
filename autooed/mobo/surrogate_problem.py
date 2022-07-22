@@ -29,15 +29,16 @@ X_ = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T),
                     axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split(
-   X_, Y, test_size=0.2)
+   X_, Y, test_size=0.2, random_state=0)
 
 
-RF = RandomForestClassifier(max_depth=10)
+RF = RandomForestClassifier(max_depth=10, random_state=0)
 RF.fit(X_train, y_train)
 pred = RF.predict_proba(X_test)
 
 print (RF.score(X_train, y_train))
 print (RF.score(X_test, y_test))
+
 RFclassifier = RF
 
 
