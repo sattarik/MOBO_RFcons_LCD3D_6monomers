@@ -12,7 +12,7 @@ from pymoo.model.problem import at_least2d
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-df = pd.read_csv('./Yuchao_20220511.csv')
+df = pd.read_csv('./Yuchao_20220721.csv')
 #df = pd.read_csv('Imaginery_initial_.csv')
 Printability = np.asarray (df['Printability']).reshape(1,-1)
 Y0 = Printability.T
