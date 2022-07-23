@@ -57,13 +57,14 @@ class printing3d_dlp(printing3d):
         f = []
 
         for i in range(0, self.n_obj):
-            
+            """
             _f = float (input (
             "ratios A-F {} sum {} Enter objective {}: ".
              format(np.round(x_,2), np.sum(np.round(x_,2)), i)))
              
             _f = -_f
-
+            """
+            _f = -10
             f.append(_f)
 
         f = np.array(f)
