@@ -1,5 +1,5 @@
 '''
-DTLZ problem suite.
+3D DLP printing problem suite.
 '''
 
 import numpy as np
@@ -15,7 +15,7 @@ class printing3d(Problem):
         'type': 'continuous',
         'n_var': 5,
         'n_obj': 2,
-        'n_constr': 2,
+        'n_constr': 3,
         'var_lb': [0, 0, 0, 0, 0],
         'var_ub': [1, 1, 1, 1, 1]
     }
@@ -38,12 +38,13 @@ class printing3d(Problem):
         f = np.array(f)
         return f
 
-    def evaluate_constraint(self, x_, RFclassifier):
+    def evaluate_constraint(self, x_, RFclassifier_print, RFclassifier_Tg):
         x1, x2, x3, x4, x5 = x_[0], x_[1], x_[2], x_[3], x_[4] 
         g1 = x1 + x2 + x3 + x4 + x5 -1
         x_ = x_.reshape(1, -1)
-        g2 = -RFclassifier.predict_proba(x_)[0][1] + 0.5
-        return g1, g2
+        g2 = -RFclassifier_print.predict_proba(x_)[0][1] + 0.7
+        g3 = -RFclassifier_Tg.predict_proba(x_)[0][1] + 0.7
+        return g1, g2, g3
 
 class printing3d_dlp(printing3d):
 
@@ -57,25 +58,23 @@ class printing3d_dlp(printing3d):
         f = []
 
         for i in range(0, self.n_obj):
-            """
+            
             _f = float (input (
             "ratios A-F {} sum {} Enter objective {}: ".
              format(np.round(x_,2), np.sum(np.round(x_,2)), i)))
-             
             _f = -_f
-            """
-            _f = -10
             f.append(_f)
 
         f = np.array(f)
         return f
-
-    def evaluate_constraint(self, x_, RFclassifier):
+    
+    def evaluate_constraint(self, x_, RFclassifier_print, RFclassifier_Tg):
         x1, x2, x3, x4, x5 = x_[0], x_[1], x_[2], x_[3], x_[4] 
         g1 = x1 + x2 + x3 + x4 + x5 -1
         x_ = x_.reshape(1, -1)
-        g2 = -RFclassifier.predict_proba(x_)[0][1] + 0.5
-        return g1, g2
+        g2 = -RFclassifier_print.predict_proba(x_)[0][1] + 0.7
+        g3 = -RFclassifier_Tg.predict_proba(x_)[0][1] + 0.7
+        return g1, g2, g3
 
 
 
