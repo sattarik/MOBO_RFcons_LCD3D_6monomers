@@ -4,31 +4,23 @@
 # In[1]:
 
 
-import numpy as np
-
-from autooed.problem import build_problem
-from autooed.mobo import build_algorithm
-from autooed.utils.seed import set_seed
-from autooed.utils.initialization import generate_random_initial_samples, load_provided_initial_samples
-from autooed.utils.plot import plot_performance_space, plot_performance_metric
-from autooed.utils.plot import plot_performance_space_diffcolor
-from argparse import ArgumentParser, Namespace
-from arguments import get_args
-
 import time
 import os
+import io
+
+from random import seed
+from random import randint
+
 from argparse import ArgumentParser, Namespace
 import yaml
 from multiprocessing import cpu_count
-import pandas as pd
 
 import matplotlib.pyplot as plt
 
 # default is to maximize the objectives
 import time as time
-import numpy as np
 import copy
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -38,15 +30,19 @@ from scipy.stats import norm
 # example of a gaussian process surrogate function
 from math import sin
 from math import pi
+import numpy as np
 from numpy import arange
 from numpy import asarray
 from numpy.random import normal
 from numpy.random import uniform
 from numpy.random import random
+from numpy import cov
+from numpy import mean
+from numpy import std
+
 from warnings import catch_warnings
 from warnings import simplefilter
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+
 
 from autooed.utils.sampling import lhs
 import random
@@ -55,40 +51,27 @@ import random
 #from xgboost import plot_tree
 from sklearn import linear_model
 from sklearn import ensemble
-
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
-# import pydo
-# generate random integer values
-from random import seed
-from random import randint
-# seed random number generator
-seed(1)
-# Machine learning & model visualization tools
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.tree import export_graphviz
 from sklearn import svm
 from sklearn.neural_network import MLPRegressor
 from sklearn.neighbors import KNeighborsRegressor
-from numpy import cov
-from scipy.stats import pearsonr
-from scipy import ndimage, misc
-#import pydot
 from sklearn.model_selection import LeaveOneOut
-from sklearn.metrics import mean_absolute_error
-# from sklearn.externals import joblib
-# Miscellaneous
-import os
-import io
-#from tensorflow.keras.models import Sequential
-#from tensorflow.keras.layers import Dense
-#from tensorflow.keras.wrappers.scikit_learn import KerasRegressor
+from sklearn.metrics import mean_absolute_error, accuracy_score
 from sklearn.inspection import partial_dependence, plot_partial_dependence
-# Doing some chemistry and feature engineering of the structure
+from sklearn.decomposition import PCA
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+# loocv to manually evaluate the performance of a random forest classifier
+from sklearn.model_selection import LeaveOneOut, cross_val_score
+
+from scipy.stats import pearsonr as pearsonr
+from scipy import ndimage, misc
 import pickle
 import re
 from rdkit import Chem
@@ -96,18 +79,110 @@ from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 from chainer_chemistry.datasets.molnet import get_molnet_dataset
 # the package is in the same directory
-from autooed.utils.sampling import lhs
-
-import numpy as np
-from sklearn.decomposition import PCA
-from sklearn.model_selection import train_test_split
 # get Today's date from python!
 from datetime import datetime
+from autooed.utils.sampling import lhs
+from autooed.problem import build_problem
+from autooed.mobo import build_algorithm
+from autooed.utils.seed import set_seed
+from autooed.utils.initialization import generate_random_initial_samples, load_provided_initial_samples
+from autooed.utils.plot import plot_performance_space, plot_performance_metric
+from autooed.utils.plot import plot_performance_space_diffcolor
+from argparse import ArgumentParser, Namespace
+from arguments import get_args
 
 
 # In[2]:
 
 
+#### preprocessing 
+# printability as Y
+df = pd.read_csv('Yuchao_20220726.csv')
+
+Printability = np.asarray (df['Printability']).reshape(1,-1).T
+Tg = np.asarray (df['Tg']).reshape(1,-1).T
+Tg[np.isnan(Tg)] = 200
+Tg_group = [1 if 10<i<60 else 0 for i in Tg]
+Tg_group = np.array(Tg_group)
+
+toughness = np.asarray (df['Toughness(MJ/m3)']).reshape(1,-1).T
+toughness[np.isnan(toughness)] = 0
+strength = np.asarray (df['Tensile_Strength(MPa)']).reshape(1,-1).T
+strength[np.isnan(strength)] = 0
+strain = np.asarray (df['Tensile_Strain_percentage']).reshape(1,-1).T
+strain[np.isnan(strain)] = 0
+
+Y0 = Printability
+Y = np.where(Y0 == 'Y', 1, 0)
+
+#X_ = df.to_numpy()
+A_Ratio = np.asarray (df['R1(HA)']).reshape(1,-1)
+B_Ratio = np.asarray (df['R2(IA)']).reshape(1,-1)
+C_Ratio = np.asarray (df['R3(NVP)']).reshape(1,-1)
+D_Ratio = np.asarray (df['R4(AA)']).reshape(1,-1)
+E_Ratio = np.asarray (df['R5(HEAA)']).reshape(1,-1)
+F_Ratio = np.asarray (df['R6(IBOA)']).reshape(1,-1)
+
+# did not consider F_Ratio, since we do not have it in optimization
+X_ = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T), axis=1)
+
+
+# load monomers descriptors
+df = pd.read_csv('monomers_info.csv')
+energy = np.array (-df['dft_sp_E_RB3LYP'])
+pol_area = np.array (df['polar_surface_area'])
+complexity = np.array (df['complexity'])
+HA = np.array (df['HA'])
+solubility = np.array (df['solubility_sqrt_MJperm3'])
+solubility_d = np.array (df['solubility_dipole'])
+solubility_h = np.array (df['solubility_h'])
+solubility_p = np.array (df['solubility_p'])
+
+X0 = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T, F_Ratio.T), axis=1)
+X_energy = np.multiply (X0, energy)
+#X_pol_area = np.multiply (X0, pol_area)
+X_complexity = np.multiply (X0, complexity)
+X_HA = np.multiply (X0, HA)
+X_solubility_d = np.multiply (X0, solubility_d)
+X_solubility_h = np.multiply (X0, solubility_h)
+X_solubility_p = np.multiply (X0, solubility_p)
+
+X = np.concatenate ((X_energy, X_complexity, X_HA, 
+                    X_solubility_d, X_solubility_h, X_solubility_p), axis=1)
+
+# got more information about input varialbe may reduce the accuracy for 
+# few samples, but it is informative for new samples.
+# The hyperparameters are fixed using one-leave-out in file "leavout_CV_RF_printability_Tg.ipynb"
+RF_print = RandomForestClassifier(random_state=0, 
+                                  max_depth = 5, 
+                                  n_estimators = 50)
+RF_print.fit(X, Y)
+Yhat = RF_print.predict(X)
+acc = accuracy_score(Y, Yhat)
+print('Accuracy: %.3f' % acc)
+#print (RF_print.get_params(deep=True))
+
+RF_Tg = RandomForestClassifier(random_state=0, 
+                                  max_depth = 5, 
+                                  n_estimators = 50)
+RF_Tg.fit(X, Tg_group)
+Yhat = RF_Tg.predict(X)
+acc = accuracy_score(Tg_group, Yhat)
+print('Accuracy: %.3f' % acc)
+#print (RF_Tg.get_params(deep=True))
+
+
+# RF.n_estimators = int (5 * RF.n_estimators)
+# RF2 = RF.fit(X_train[0:5,:], y_train[0:5])
+# pred = RF2.predict_proba(X_train)
+# print (RF2.score(X_train, y_train))
+# print (RF2.score(X_test, y_test))
+# 
+
+# In[3]:
+
+
+### Start the real optimization
 # Change the default values for new argument
 def get_general_args(args=None):
     '''
@@ -125,7 +200,7 @@ def get_general_args(args=None):
         help='size of the batch in optimization')
     parser.add_argument('--n-init-sample', type=int, default=0, 
         help='number of initial design samples')
-    parser.add_argument('--n-total-sample', type=int, default=43, 
+    parser.add_argument('--n-total-sample', type=int, default=200, 
         help='number of total design samples (budget)')
 
     args, _ = parser.parse_known_args(args)
@@ -170,7 +245,7 @@ def get_solver_args(args=None):
     parser.add_argument('--solver', type=str, 
         choices=['nsga2', 'moead', 'parego', 'discovery', 'ga', 'cmaes'], default='nsga2', 
         help='type of the multiobjective solver')
-    parser.add_argument('--n-process', type=int, default=cpu_count(),
+    parser.add_argument('--n-process', type=int, default=1,
         help='number of processes to be used for parallelization')
 
     args, _ = parser.parse_known_args(args)
@@ -227,47 +302,7 @@ def get_args():
     return general_args, module_cfg
 
 
-# In[3]:
-
-
-# printability as Y
-df = pd.read_csv('Yuchao_20220511.csv')
-#df = pd.read_csv('Imaginery_initial_.csv')
-Printability = np.asarray (df['Printability']).reshape(1,-1)
-Y0 = Printability.T
-Y = np.where(Y0 == 'Y', 1, 0)
-
-#X_ = df.to_numpy()
-A_Ratio = np.asarray (df['R1(HA)']).reshape(1,-1)
-B_Ratio = np.asarray (df['R2(IA)']).reshape(1,-1)
-C_Ratio = np.asarray (df['R3(NVP)']).reshape(1,-1)
-D_Ratio = np.asarray (df['R4(AA)']).reshape(1,-1)
-E_Ratio = np.asarray (df['R5(HEAA)']).reshape(1,-1)
-#F_Ratio = np.asarray (df['R6(IBOA)']).reshape(1,-1)
-X_ = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T), 
-                    axis=1)
-
-X_train, X_test, y_train, y_test = train_test_split(
-   X_, Y, test_size=0.2)
-
-
-RF = RandomForestClassifier(max_depth=10)
-RF.fit(X_train, y_train)
-pred = RF.predict_proba(X_test)
-
-print (RF.score(X_train, y_train))
-print (RF.score(X_test, y_test))
-
-
-# In[4]:
-
-
-x = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
-x = x.reshape(1, -1)
-print (-RF.predict_proba(x)[0][1] + 0.5)
-
-
-# In[5]:
+# In[ ]:
 
 
 # load arguments
@@ -292,8 +327,8 @@ Y = np.array([problem.evaluate_objective(x) for x in X])
 print ('read X', X.shape)
 print ('read Y', Y.shape)
 
-path = ['./Yuchao_20220511_X.csv', 
-        './Yuchao_20220511_Y.csv']
+path = ['./Yuchao_20220726_X.csv', 
+        './Yuchao_20220726_Y.csv']
 X, Y = load_provided_initial_samples(path)
 
 Y = -Y
@@ -303,38 +338,64 @@ print ('read Y', Y.shape)
 X0 = X
 Y0 = Y
 
-RFclassifier = RF
-
 # optimization
 while len(X) < args.n_total_sample:
     
     start = time.time()
     # propose design samples
-    X_next = algorithm.optimize(X, Y, X_busy=None, batch_size=args.batch_size)
-
+    X_next = algorithm.optimize(X, Y, X_busy=None, batch_size=4)
+    print (X_next)
+    print (time.time() - start)
     # evaluate proposed samples
     Y_next = np.array([problem.evaluate_objective(x) for x in X_next])
-
+    
     # combine into dataset
     X = np.vstack([X, X_next])
     Y = np.vstack([Y, Y_next])
+    for x_next in X_next:
+        printability_new = int (input (
+            "ratios A-F {} sum {} Enter Printability 0or1: ".
+             format(np.round(x_next,2), np.sum(np.round(x_next, 2)))))
+        Tg_new = float (input (
+            "ratios A-F {} sum {} Enter Tg: ".
+             format(np.round(x_next,2), np.sum(np.round(x_next, 2)))))
+        new_printability_Tg = [list(x_next), printability_new, Tg_new]
+        new_printability_Tg = str(new_printability_Tg)
+        new_printability_Tg = new_printability_Tg.replace("[", "")
+        new_printability_Tg = new_printability_Tg.replace("]", "")
+        with open('printability_Tg.csv','a') as fd:
+            fd.write(new_printability_Tg)
     print(f'{len(X)}/{args.n_total_sample} complete')
     print (time.time() - start)
 
 
-# In[6]:
+# In[ ]:
 
 
-args.batch_size
+x = 4
+y = np.array ([5, 2])
+
+myCsvRow = [x, list(y)]
+myCsvRow = str(myCsvRow)
+myCsvRow = myCsvRow.replace("[", "")
+myCsvRow = myCsvRow.replace("]", "")
+print (myCsvRow)
 
 
-# In[7]:
+# In[ ]:
 
 
-np.sum(X, axis=1)
+myCsvRow = [0.35, 0.24, 0, 0.1, 0.17, 1, 37.5]
+myCsvRow = str(myCsvRow)
+myCsvRow = myCsvRow.replace("[", "")
+myCsvRow = myCsvRow.replace("]", "")
+print (myCsvRow)
+
+with open('printability_Tg.csv','a') as fd:
+    fd.write(myCsvRow)
 
 
-# In[8]:
+# In[ ]:
 
 
 # plot
@@ -343,21 +404,11 @@ plot_performance_space_diffcolor(Y0=-Y0, Y_eval=-Y_eval)
 plot_performance_metric(Y, problem.obj_type)
 
 
-# In[9]:
+# In[ ]:
 
 
-X
-
-
-# In[10]:
-
-
-RF.predict_proba(X)
-
-
-# In[11]:
-
-
-x = [0.35, 0.24, 0.,   0.1,  0.17]
-np.sum(np.array(x))
+y=2
+def fun_x2 (x):
+    return y+x
+fun_x2(4)
 
