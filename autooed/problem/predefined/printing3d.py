@@ -8,6 +8,10 @@ from pymoo.problems.util import load_pareto_front_from_file
 
 from autooed.problem.problem import Problem
 
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+
 
 class printing3d(Problem):
 
@@ -38,12 +42,61 @@ class printing3d(Problem):
         f = np.array(f)
         return f
 
-    def evaluate_constraint(self, x_, RFclassifier_print, RFclassifier_Tg):
+    def evaluate_objective(self, x_, alpha=1):
+        f = []
+
+        for i in range(0, self.n_obj):
+            
+            _f = float (input (
+            "ratios A-F {} sum {} Enter objective {}: ".
+             format(np.round(x_,2), np.sum(np.round(x_,2)), i)))
+            _f = -_f
+            f.append(_f)
+
+        f = np.array(f)
+        return f
+    
+    def evaluate_constraint(self, x_):
         x1, x2, x3, x4, x5 = x_[0], x_[1], x_[2], x_[3], x_[4] 
         g1 = x1 + x2 + x3 + x4 + x5 -1
         x_ = x_.reshape(1, -1)
-        g2 = -RFclassifier_print.predict_proba(x_)[0][1] + 0.7
-        g3 = -RFclassifier_Tg.predict_proba(x_)[0][1] + 0.7
+        
+        df = pd.read_csv('./printability_Tg.csv')
+
+        Printability = np.asarray (df['Printability']).reshape(1,-1)
+        Y0 = Printability.T
+        #Y = np.where(Y0 == 'Y', 1, 0)
+        print ("samples for training Tg and printability", Y.shape)
+
+        Tg = np.asarray (df['Tg']).reshape(1,-1).T
+        Tg[np.isnan(Tg)] = 200
+        Tg_min = 10
+        Tg_max = 60
+        Tg_group = [1 if Tg_min<i<Tg_max else 0 for i in Tg]
+        Tg_group = np.array(Tg_group)
+
+        #X_ = df.to_numpy()
+        A_Ratio = np.asarray (df['R1(HA)']).reshape(1,-1)
+        B_Ratio = np.asarray (df['R2(IA)']).reshape(1,-1)
+        C_Ratio = np.asarray (df['R3(NVP)']).reshape(1,-1)
+        D_Ratio = np.asarray (df['R4(AA)']).reshape(1,-1)
+        E_Ratio = np.asarray (df['R5(HEAA)']).reshape(1,-1)
+        #F_Ratio = np.asarray (df['R6(IBOA)']).reshape(1,-1)
+        X_ = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T), 
+                    axis=1)
+
+
+
+        RF_print = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
+        RF_Tg = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
+
+        RF_print.fit(X_, Y)
+        RF_Tg.fit(X_, Tg_group)
+
+        print ('Printability accuracy on all data', RF_print.score(X_, Y))
+        print ('Tg accuracy on all data group 1 in range of [{}, {}] is: {}'.format(Tg_min, Tg_max, RF_Tg.score(X_, Tg_group)))
+        g2 = -RF_print.predict_proba(x_)[0][1] + 0.7
+        g3 = -RF_Tg.predict_proba(x_)[0][1] + 0.7
         return g1, g2, g3
 
 class printing3d_dlp(printing3d):
@@ -68,12 +121,48 @@ class printing3d_dlp(printing3d):
         f = np.array(f)
         return f
     
-    def evaluate_constraint(self, x_, RFclassifier_print, RFclassifier_Tg):
+    def evaluate_constraint(self, x_):
         x1, x2, x3, x4, x5 = x_[0], x_[1], x_[2], x_[3], x_[4] 
         g1 = x1 + x2 + x3 + x4 + x5 -1
         x_ = x_.reshape(1, -1)
-        g2 = -RFclassifier_print.predict_proba(x_)[0][1] + 0.7
-        g3 = -RFclassifier_Tg.predict_proba(x_)[0][1] + 0.7
+        
+        df = pd.read_csv('./printability_Tg.csv')
+
+        Printability = np.asarray (df['Printability']).reshape(1,-1)
+        Y0 = Printability.T
+        #Y = np.where(Y0 == 'Y', 1, 0)
+        Y = Y0
+        print ("samples for training Tg and printability", Y.shape)
+
+        Tg = np.asarray (df['Tg']).reshape(1,-1).T
+        Tg[np.isnan(Tg)] = 200
+        Tg_min = 10
+        Tg_max = 60
+        Tg_group = [1 if Tg_min<i<Tg_max else 0 for i in Tg]
+        Tg_group = np.array(Tg_group)
+
+        #X_ = df.to_numpy()
+        A_Ratio = np.asarray (df['R1(HA)']).reshape(1,-1)
+        B_Ratio = np.asarray (df['R2(IA)']).reshape(1,-1)
+        C_Ratio = np.asarray (df['R3(NVP)']).reshape(1,-1)
+        D_Ratio = np.asarray (df['R4(AA)']).reshape(1,-1)
+        E_Ratio = np.asarray (df['R5(HEAA)']).reshape(1,-1)
+        #F_Ratio = np.asarray (df['R6(IBOA)']).reshape(1,-1)
+        X_ = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T), 
+                    axis=1)
+
+
+
+        RF_print = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
+        RF_Tg = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
+
+        RF_print.fit(X_, Y)
+        RF_Tg.fit(X_, Tg_group)
+
+        print ('Printability accuracy on all data', RF_print.score(X_, Y))
+        print ('Tg accuracy on all data group 1 in range of [{}, {}] is: {}'.format(Tg_min, Tg_max, RF_Tg.score(X_, Tg_group)))
+        g2 = -RF_print.predict_proba(x_)[0][1] + 0.7
+        g3 = -RF_Tg.predict_proba(x_)[0][1] + 0.7
         return g1, g2, g3
 
 

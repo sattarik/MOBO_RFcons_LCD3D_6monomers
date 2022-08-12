@@ -8,47 +8,6 @@ from pymoo.model.problem import Problem
 from pymoo.model.problem import at_least2d
 
 
-# printability as Y
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-df = pd.read_csv('./Yuchao_20220726.csv')
-
-Printability = np.asarray (df['Printability']).reshape(1,-1)
-Y0 = Printability.T
-Y = np.where(Y0 == 'Y', 1, 0)
-
-Tg = np.asarray (df['Tg']).reshape(1,-1).T
-Tg[np.isnan(Tg)] = 200
-Tg_min = 10
-Tg_max = 60
-Tg_group = [1 if Tg_min<i<Tg_max else 0 for i in Tg]
-Tg_group = np.array(Tg_group)
-
-#X_ = df.to_numpy()
-A_Ratio = np.asarray (df['R1(HA)']).reshape(1,-1)
-B_Ratio = np.asarray (df['R2(IA)']).reshape(1,-1)
-C_Ratio = np.asarray (df['R3(NVP)']).reshape(1,-1)
-D_Ratio = np.asarray (df['R4(AA)']).reshape(1,-1)
-E_Ratio = np.asarray (df['R5(HEAA)']).reshape(1,-1)
-#F_Ratio = np.asarray (df['R6(IBOA)']).reshape(1,-1)
-X_ = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T), 
-                    axis=1)
-
-
-
-RF_print = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
-RF_Tg = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
-
-RF_print.fit(X_, Y)
-RF_Tg.fit(X_, Tg_group)
-
-print ('Printability accuracy on all data', RF_print.score(X_, Y))
-print ('Tg accuracy on all data group 1 in range of [{}, {}] is: {}'.format(Tg_min, Tg_max, RF_Tg.score(X_, Tg_group)))
-
-RFclassifier_print = RF_print
-RFclassifier_Tg = RF_Tg
-
 class SurrogateProblem(Problem):
 
     def __init__(self, problem, acquisition):
@@ -70,7 +29,7 @@ class SurrogateProblem(Problem):
             xl=problem.xl, xu=problem.xu
         )
 
-    def _evaluate(self, X, out, RFclassifier_print, RFclassifier_Tg, *args, gradient, hessian, **kwargs):
+    def _evaluate(self, X, out, *args, gradient, hessian, **kwargs):
         '''
         The main evaluation computation.
 
@@ -90,7 +49,7 @@ class SurrogateProblem(Problem):
         
         # evaluate cheap constraints by real problem
         X_raw = self.transformation.undo(X)
-        out['G'] = np.array([self.problem.evaluate_constraint(x_raw, RFclassifier_print, RFclassifier_Tg) for x_raw in X_raw])
+        out['G'] = np.array([self.problem.evaluate_constraint(x_raw) for x_raw in X_raw])
         print (" Out['G'] ", out['G'])
 
     def evaluate(self, X, *args, return_values_of="auto", return_as_dictionary=False, **kwargs):
@@ -157,7 +116,7 @@ class SurrogateProblem(Problem):
             out[val] = None
 
         # calculate the output array - either elementwise or not. also consider the gradient
-        self._evaluate(X, out, RFclassifier_print, RFclassifier_Tg, *args, gradient=gradient, hessian=hessian, **kwargs)
+        self._evaluate(X, out, *args, gradient=gradient, hessian=hessian, **kwargs)
         at_least2d(out)
 
         gradient_of = [key for key, val in out.items()
@@ -207,7 +166,7 @@ class SurrogateProblem(Problem):
             else:
                 return tuple([out[val] for val in return_values_of])
 
-    def evaluate_constraint(self, X, RFclassifier_print, RFclassifier_Tg):
+    def evaluate_constraint(self, X):
         '''
         A constraint evaluation function for continuous design variables, which is needed in the solver.
 
@@ -224,9 +183,9 @@ class SurrogateProblem(Problem):
         X = self.transformation.undo(X)
 
         if X.ndim == 1:
-            return self.problem.evaluate_constraint(X, RFclassifier_print, RFclassifier_Tg)
+            return self.problem.evaluate_constraint(X)
         elif X.ndim == 2:
-            G = np.array([self.problem.evaluate_constraint(x, RFclassifier_print, RFclassifier_Tg) for x in X])
+            G = np.array([self.problem.evaluate_constraint(x) for x in X])
             print (G)
             if None in G:
                 return None
