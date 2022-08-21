@@ -105,7 +105,7 @@ class GaussianProcess(SurrogateModel):
     '''
     Gaussian process.
     '''
-    def __init__(self, problem, nu=1, **kwargs):
+    def __init__(self, problem, nu=5, **kwargs):
         '''
         Initialize a Gaussian process.
 

@@ -1,9 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import time
 import os
 import io
@@ -91,63 +86,57 @@ from autooed.utils.plot import plot_performance_space_diffcolor
 from argparse import ArgumentParser, Namespace
 from arguments import get_args
 
-
-# In[2]:
-
-
 #### preprocessing 
-# printability as Y
-df = pd.read_csv('Yuchao_20220726.csv')
-
+# printability as Y, Tg
+df = pd.read_csv('Yuchao_20220816.csv')
 Printability = np.asarray (df['Printability']).reshape(1,-1).T
+Y0 = Printability
+Y = np.where(Y0 == 'Y', 1, 0)
 Tg = np.asarray (df['Tg']).reshape(1,-1).T
+# put a very high value for Tg that are not printable, too brittle
 Tg[np.isnan(Tg)] = 200
+# group the Tg, we want it to be in range [10, 60]
 Tg_group = [1 if 10<i<60 else 0 for i in Tg]
 Tg_group = np.array(Tg_group)
-
+# read the 2 objectives
 toughness = np.asarray (df['Toughness(MJ/m3)']).reshape(1,-1).T
 toughness[np.isnan(toughness)] = 0
 strength = np.asarray (df['Tensile_Strength(MPa)']).reshape(1,-1).T
 strength[np.isnan(strength)] = 0
+# not using Tensile strain yet
 strain = np.asarray (df['Tensile_Strain_percentage']).reshape(1,-1).T
 strain[np.isnan(strain)] = 0
 
-Y0 = Printability
-Y = np.where(Y0 == 'Y', 1, 0)
-
-#X_ = df.to_numpy()
+# read the ratios of 6 monomers.
 A_Ratio = np.asarray (df['R1(HA)']).reshape(1,-1)
 B_Ratio = np.asarray (df['R2(IA)']).reshape(1,-1)
 C_Ratio = np.asarray (df['R3(NVP)']).reshape(1,-1)
 D_Ratio = np.asarray (df['R4(AA)']).reshape(1,-1)
 E_Ratio = np.asarray (df['R5(HEAA)']).reshape(1,-1)
 F_Ratio = np.asarray (df['R6(IBOA)']).reshape(1,-1)
-
 # did not consider F_Ratio, since we do not have it in optimization
 X_ = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T), axis=1)
-
+X0 = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T, F_Ratio.T), axis=1)
 
 # load monomers descriptors
 df = pd.read_csv('monomers_info.csv')
 energy = np.array (-df['dft_sp_E_RB3LYP'])
 pol_area = np.array (df['polar_surface_area'])
 complexity = np.array (df['complexity'])
-HA = np.array (df['HA'])
+HAMW = np.array (df['HAMW'])
 solubility = np.array (df['solubility_sqrt_MJperm3'])
 solubility_d = np.array (df['solubility_dipole'])
 solubility_h = np.array (df['solubility_h'])
 solubility_p = np.array (df['solubility_p'])
-
-X0 = np.concatenate((A_Ratio.T, B_Ratio.T, C_Ratio.T, D_Ratio.T, E_Ratio.T, F_Ratio.T), axis=1)
+# multiply Ratios by their descriptors
 X_energy = np.multiply (X0, energy)
 #X_pol_area = np.multiply (X0, pol_area)
 X_complexity = np.multiply (X0, complexity)
-X_HA = np.multiply (X0, HA)
+X_HAMW = np.multiply (X0, HAMW)
 X_solubility_d = np.multiply (X0, solubility_d)
 X_solubility_h = np.multiply (X0, solubility_h)
 X_solubility_p = np.multiply (X0, solubility_p)
-
-X = np.concatenate ((X_energy, X_complexity, X_HA, 
+X = np.concatenate ((X_energy, X_complexity, X_HAMW, 
                     X_solubility_d, X_solubility_h, X_solubility_p), axis=1)
 
 # got more information about input varialbe may reduce the accuracy for 
@@ -161,7 +150,6 @@ Yhat = RF_print.predict(X)
 acc = accuracy_score(Y, Yhat)
 print('Accuracy: %.3f' % acc)
 #print (RF_print.get_params(deep=True))
-
 RF_Tg = RandomForestClassifier(random_state=0, 
                                   max_depth = 5, 
                                   n_estimators = 50)
@@ -170,17 +158,11 @@ Yhat = RF_Tg.predict(X)
 acc = accuracy_score(Tg_group, Yhat)
 print('Accuracy: %.3f' % acc)
 #print (RF_Tg.get_params(deep=True))
-
-
 # RF.n_estimators = int (5 * RF.n_estimators)
 # RF2 = RF.fit(X_train[0:5,:], y_train[0:5])
 # pred = RF2.predict_proba(X_train)
 # print (RF2.score(X_train, y_train))
 # print (RF2.score(X_test, y_test))
-# 
-
-# In[3]:
-
 
 ### Start the real optimization
 # Change the default values for new argument
@@ -245,7 +227,7 @@ def get_solver_args(args=None):
     parser.add_argument('--solver', type=str, 
         choices=['nsga2', 'moead', 'parego', 'discovery', 'ga', 'cmaes'], default='nsga2', 
         help='type of the multiobjective solver')
-    parser.add_argument('--n-process', type=int, default=1,
+    parser.add_argument('--n-process', type=int, default=2,
         help='number of processes to be used for parallelization')
 
     args, _ = parser.parse_known_args(args)
@@ -302,9 +284,6 @@ def get_args():
     return general_args, module_cfg
 
 
-# In[ ]:
-
-
 # load arguments
 args, module_cfg = get_args()
 print (args.seed)
@@ -320,82 +299,76 @@ algorithm = build_algorithm(args.algo, problem, module_cfg)
 print(algorithm)
 
 # generate initial random samples
-#X = generate_random_initial_samples(problem, args.n_init_sample)
 X = generate_random_initial_samples(problem, args.n_init_sample)
 Y = np.array([problem.evaluate_objective(x) for x in X])
-
 print ('read X', X.shape)
 print ('read Y', Y.shape)
 
-path = ['./Yuchao_20220726_X.csv', 
-        './Yuchao_20220726_Y.csv']
+# read the initial samples, X is 6 Ratios, Y is two objective: 
+# Strength, Toughness.
+path = ['./Yuchao_20220816_X.csv', 
+        './Yuchao_20220816_Y.csv']
 X, Y = load_provided_initial_samples(path)
-
+# we minimze the Objectives, so multiply -1
 Y = -Y
 print ('read X', X.shape)
 print ('read Y', Y.shape)
 
 X0 = X
 Y0 = Y
-
 # optimization
 while len(X) < args.n_total_sample:
-    
     start = time.time()
     # propose design samples
-    X_next = algorithm.optimize(X, Y, X_busy=None, batch_size=4)
+    X_next = algorithm.optimize(X, Y, X_busy=None, batch_size=2)
     print (X_next)
     print (time.time() - start)
     # evaluate proposed samples
     Y_next = np.array([problem.evaluate_objective(x) for x in X_next])
-    
     # combine into dataset
     X = np.vstack([X, X_next])
     Y = np.vstack([Y, Y_next])
-    for x_next in X_next:
-        printability_new = int (input (
-            "ratios A-F {} sum {} Enter Printability 0or1: ".
-             format(np.round(x_next,2), np.sum(np.round(x_next, 2)))))
-        Tg_new = float (input (
-            "ratios A-F {} sum {} Enter Tg: ".
-             format(np.round(x_next,2), np.sum(np.round(x_next, 2)))))
-        new_printability_Tg = [list(x_next), printability_new, Tg_new]
+    for (x_next, y_next) in zip(X_next, Y_next):
+        while True:
+            try:
+                printability_new = int (input (
+                    "ratios A-F {} sum {} Enter Printability 0or1: ".
+                     format(np.round(x_next, 2), np.sum(np.round(x_next, 2)))))
+            except ValueError:
+                print ("printability is not read correctly")
+                continue
+            else:
+                break
+        while True:
+            try:
+                 Tg_new = float (input (
+                  "ratios A-F {} sum {} Enter Tg: ".
+                 format(np.round(x_next,2), np.sum(np.round(x_next, 2)))))
+            except ValueError:
+                print ("Tg is not read correctly")
+                continue
+            else:
+                break
+        new_printability_Tg = [list(np.round(x_next,2)), [1-np.sum(np.round(x_next,2))], printability_new, Tg_new]
+        new_sample = new_printability_Tg
         new_printability_Tg = str(new_printability_Tg)
         new_printability_Tg = new_printability_Tg.replace("[", "")
         new_printability_Tg = new_printability_Tg.replace("]", "")
+        new_printability_Tg = new_printability_Tg + "\n"
         with open('printability_Tg.csv','a') as fd:
             fd.write(new_printability_Tg)
+        new_sample.append(y_next[0])
+        new_sample.append(y_next[1])
+        new_sample = str(new_sample)
+        new_sample = new_sample.replace("[", "")
+        new_sample = new_sample.replace("]", "")
+        new_sample = new_sample + "\n"
+        with open('new_evaluated.csv','a') as fd:
+            fd.write(new_sample)        
     print(f'{len(X)}/{args.n_total_sample} complete')
     print (time.time() - start)
 
 
-# In[ ]:
-
-
-x = 4
-y = np.array ([5, 2])
-
-myCsvRow = [x, list(y)]
-myCsvRow = str(myCsvRow)
-myCsvRow = myCsvRow.replace("[", "")
-myCsvRow = myCsvRow.replace("]", "")
-print (myCsvRow)
-
-
-# In[ ]:
-
-
-myCsvRow = [0.35, 0.24, 0, 0.1, 0.17, 1, 37.5]
-myCsvRow = str(myCsvRow)
-myCsvRow = myCsvRow.replace("[", "")
-myCsvRow = myCsvRow.replace("]", "")
-print (myCsvRow)
-
-with open('printability_Tg.csv','a') as fd:
-    fd.write(myCsvRow)
-
-
-# In[ ]:
 
 
 # plot
@@ -403,12 +376,4 @@ Y_eval = Y[Y0.shape[0]:, :]
 plot_performance_space_diffcolor(Y0=-Y0, Y_eval=-Y_eval)
 plot_performance_metric(Y, problem.obj_type)
 
-
-# In[ ]:
-
-
-y=2
-def fun_x2 (x):
-    return y+x
-fun_x2(4)
 
