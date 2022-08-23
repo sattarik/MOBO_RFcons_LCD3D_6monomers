@@ -88,7 +88,7 @@ class Problem(PymooProblem):
         return None
     """
 
-    def evaluate_feasible(self, x, RFclassifier):
+    def evaluate_feasible(self, x):
         '''
         Feasibility evaluation, can be computed from constraint evaluation
         '''
@@ -96,13 +96,13 @@ class Problem(PymooProblem):
             CV = np.zeros([x.shape[0], 1])
         else:
             print ("x_", x[1])
-            G = [self.evaluate_constraint(x_, RFclassifier) for x_ in x]
+            G = [self.evaluate_constraint(x_) for x_ in x]
             assert None not in G, 'constraint evaluation function is invalid'
             CV = Problem.calc_constraint_violation(np.column_stack(np.atleast_2d(G)))
         feasible = (CV <= 0).flatten()
         return feasible
 
-    def _evaluate(self, x, out, RFclassifier,*args, **kwargs):
+    def _evaluate(self, x, out,*args, **kwargs):
         '''
         Deprecated evaluation function, please call evaluate_objective() and evaluate_constraint() instead
         '''

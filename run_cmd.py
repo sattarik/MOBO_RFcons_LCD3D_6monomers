@@ -5,7 +5,7 @@ from autooed.mobo import build_algorithm
 from autooed.utils.seed import set_seed
 from autooed.utils.initialization import generate_random_initial_samples
 from autooed.utils.plot import plot_performance_space, plot_performance_metric
-
+from autooed.utils.plot import plot_performance_space_diffcolor
 from arguments import get_args
 
 
@@ -28,6 +28,8 @@ if __name__ == '__main__':
     # generate initial random samples
     X = generate_random_initial_samples(problem, args.n_init_sample)
     Y = np.array([problem.evaluate_objective(x) for x in X])
+    X0 = X
+    Y0 = Y
 
     # optimization
     while len(X) < args.n_total_sample:
@@ -47,3 +49,6 @@ if __name__ == '__main__':
     # plot
     plot_performance_space(Y)
     plot_performance_metric(Y, problem.obj_type)
+    Y_eval = Y[Y0.shape[0]:, :]
+    plot_performance_space_diffcolor(Y0=Y0, Y_eval=Y_eval)
+    

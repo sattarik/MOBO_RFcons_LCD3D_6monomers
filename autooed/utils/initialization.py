@@ -24,7 +24,7 @@ def generate_random_initial_samples(problem, n_sample):
     while len(X_feasible) < n_sample and iter_count < max_iter:
         X = lhs(problem.n_var, n_sample) # TODO: support other types of initialization
         X = problem.xl + X * (problem.xu - problem.xl)
-        feasible = problem.evaluate_feasible(X, RFclassifier) # NOTE: assume constraint evaluation is fast
+        feasible = problem.evaluate_feasible(X) # NOTE: assume constraint evaluation is fast
         print ('feasible, ', feasible)
         print ('X', X)
         print ("X[feasible]", X[feasible])
