@@ -106,7 +106,7 @@ class printing3d_dlp(printing3d):
         #print ("samples for training Tg and printability", Y.shape)
 
         Tg = np.asarray (df['Tg']).reshape(1,-1).T
-        Tg[np.isnan(Tg)] = 200
+        #Tg[np.isnan(Tg)] = 200
         Tg_min = 10
         Tg_max = 60
         Tg_group = [1 if 10<i<60 else 0 for i in Tg]
