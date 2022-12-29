@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from mpl_toolkits.mplot3d import Axes3D
 from pymoo.factory import get_performance_indicator
-
+import matplotlib as mpl
 from autooed.utils.pareto import convert_minimization
 
 
@@ -72,6 +72,10 @@ def plot_performance_space_diffcolor(Y0, Y_eval):
 def plot_performance_metric(Y, obj_type):
     '''
     '''
+    fig, ax = plt.subplots(figsize=(5, 4))
+    ax.tick_params(direction='in', length=4, width=1.5, colors='black', grid_alpha=0, labelsize='1')
+    ax.set_xlabel('Iterations', fontsize='18', fontname='Arial', fontweight='bold')
+    ax.set_ylabel('Hypervolume', fontsize='18', fontname='Arial', fontweight='bold')
     if Y.shape[1] == 1:
         opt_list = []
         if obj_type == ['min']:
@@ -92,8 +96,12 @@ def plot_performance_metric(Y, obj_type):
         for i in range(1, len(Y)):
             hv = indicator.calc(Y[:i])
             hv_list.append(hv)
-        plt.plot(np.arange(1, len(Y)), hv_list)
-        plt.title('Hypervolume')
+        
+        plt.plot(np.arange(1, len(Y)), hv_list, linewidth=5)
+        #plt.title('HVE0')
     else:
         raise Exception(f'Invalid objective dimension {Y.shape[1]}')
-    plt.show()
+    mpl.rcParams['axes.linewidth'] = 2  
+    ax.tick_params(axis='both', labelsize=15)
+    plt.tight_layout()
+    plt.savefig('HVE.png', dpi=300)
