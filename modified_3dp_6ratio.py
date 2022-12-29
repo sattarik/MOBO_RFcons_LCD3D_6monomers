@@ -182,7 +182,7 @@ def get_general_args(args=None):
         help='size of the batch in optimization')
     parser.add_argument('--n-init-sample', type=int, default=0, 
         help='number of initial design samples')
-    parser.add_argument('--n-total-sample', type=int, default=200, 
+    parser.add_argument('--n-total-sample', type=int, default=250, 
         help='number of total design samples (budget)')
 
     args, _ = parser.parse_known_args(args)
@@ -367,8 +367,6 @@ while len(X) < args.n_total_sample:
             fd.write(new_sample)        
     print(f'{len(X)}/{args.n_total_sample} complete')
     print (time.time() - start)
-
-
 
 
 # plot
