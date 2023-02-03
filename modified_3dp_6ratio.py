@@ -58,7 +58,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import LeaveOneOut
 from sklearn.metrics import mean_absolute_error, accuracy_score
-from sklearn.inspection import partial_dependence, plot_partial_dependence
+#from sklearn.inspection import partial_dependence, plot_partial_dependence
 from sklearn.decomposition import PCA
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
