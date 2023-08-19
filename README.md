@@ -1,96 +1,14 @@
-<img width="400" src="docs/source/_static/logo.png">
+![image](https://github.com/sattarik/MOBO_RFcons_LCD3D_6monomers/assets/54645299/214488c8-d91f-4092-9e11-5283b283909b)# Multi-Objective Bayesian Optimization for 3D Printing of Thermoplastics
+This repository is an adaptation of the original code from AutoOED available at: AutoOED GitHub. The code has been tailored by Kianoosh Sattari to accommodate MOBO (Multi-Objective Bayesian Optimization) for optimizing the 3D printing process of thermoplastics using mixed inks containing 6 monomers: R1(HA)	R2(IA)	R3(NVP)	R4(AA)	R5(HEAA)	R6(IBOA)
 
-![Platform](https://img.shields.io/badge/platform-windows|macos|linux-lightgrey) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) 
+# Modifications and Objectives
+The codebase was adjusted to handle the intricate process of 3D printing thermoplastics with mixed inks of the 6 aforementioned monomers. 
+Three constraints were added to handle Sum(R1-R5)<=1, the printability, and Tg range of the suggested monomers. 
 
-**AutoOED: Automated Optimal Experimental Design Platform**
+The primary objectives of this optimization were to enhance two crucial mechanical properties: Tensile Strength and Toughness, both evaluated under a tensile test. Notably, these objectives are inherently in conflict with each other, and no explicit function exists that establishes a direct relationship between the monomer ratios and the final mechanical properties.
 
-**[Paper](https://arxiv.org/abs/2104.05959) | [Website](https://autooed.org) | [Documentation](https://autooed.readthedocs.io) | [Contact](mailto:autooed@csail.mit.edu)** 
+# Gaussian Process and Experiment Setup
+Hyperparameters for the Gaussian Process models were established based on 30 initial samples. Alireza Mahjoubnia conducted the 3D printing experiments involving the thermoplastics. The initial 30 samples were optimized in an attempt to identify the optimal ratios that yield the most favorable mechanical properties.
 
-AutoOED is an optimal experimental design platform powered with automated machine learning to accelerate the discovery of optimal solutions. Our platform solves multi-objective optimization problems and automatically guides the design of experiment to be evaluated. 
-
-*NOTE: The paper and the documentation are slightly outdated. The descriptions may differ from the latest version of the software. We will update them soon.*
-
-## Overview
-
-AutoOED is a powerful and easy-to-use tool written in Python for design parameter optimization with multiple objectives, which can be used for any kind of experiment settings (chemistry, material, physics, engineering, computer science…). AutoOED aims at improving the sample efficiency of optimization problems, i.e., using less number of samples to achieve the best performance, by applying state-of-the-art machine learning approaches, which is most powerful when the performance evaluation of your problem is expensive (for example, in terms of time or money). 
-
-One of the most important features of AutoOED is an intuitive graphical user interface (GUI), which is provided to visualize and guide the experiments for users with little or no experience with coding, machine learning, or optimization. Furthermore, a distributed system is integrated to enable parallelized experimental evaluations by multiple processes on a single computer.
-
-<p>
-   	<img width="49%" src="docs/source/_static/manual/run-optimization/auto_control.png">
-    <img width="49%" src="docs/source/_static/manual/database/database.png">
-</p>
-
-## Installation
-
-AutoOED can be installed either directly from the links to the executable files, or from source code. AutoOED generally works across all Windows/MacOS/Linux operating systems. After installation, there are some extra steps to take if you want to link your own evaluation programs to AutoOED for fully automatic experimentation.
-
-
-### Executable files
-
-[**Windows**](https://drive.google.com/file/d/1bAPK3HPPxwXy1k-epYXmL5HgW7KkJigi/view) (Install using AutoOED-Setup.exe)
-
-[**MacOS**](https://drive.google.com/file/d/1-XkUYi9M21gZ5bpsYAVbINJoYC7THu_U/view) (Install using AutoOED.dmg)
-
-[**Linux**](https://drive.google.com/file/d/1fOF636a4fsKXBT3mZzjxh7lhghMc2jX5/view) (Unzip and find the executable at AutoOED_{version}/AutoOED_{version})
-
-
-### Source code
-
-#### Step 1: General (Required)
-
-Install by conda with pip:
-
-```
-conda env create -f environment.yml
-conda activate autooed
-pip install -r requirements_extra.txt
-```
-
-Or install purely by pip:
-
-```
-pip install -r requirements.txt
-pip install -r requirements_extra.txt
-```
-
-*Note: If you cannot properly run the programs after installation, please check if the version of these packages match our specifications.*
-
-#### Step 2: Custom Evaluation Programs (Optional)
-
-There is some more work to do if you want to link your own evaluation programs to AutoOED to achieve fully automated experimentation, please see our documentation for more details.
-
-## Getting Started
-
-After installation, please run the following command to start AutoOED with the GUI.
-
-```bash
-python run_gui.py
-```
-
-For more detailed usage and information of AutoOED, please checkout our documentation.
-
-## Citation
-
-If you find our work helpful to your research, please consider citing our [paper](https://arxiv.org/abs/2104.05959).
-
-```
-@misc{tian2021autooed,
-    title={AutoOED: Automated Optimal Experiment Design Platform},
-    author={Yunsheng Tian and Mina Konaković Luković and Timothy Erps and Michael Foshey and Wojciech Matusik},
-    year={2021},
-    eprint={2104.05959},
-    archivePrefix={arXiv},
-    primaryClass={cs.AI}
-}
-```
-
-## Contributing
-
-We highly welcome all kinds of contributions, including but not limited to bug fixes, new feature suggestions, more intuitive error messages, and so on.
-
-Especially, [the algorithmic part](https://github.com/yunshengtian/AutoOED/tree/master/algorithm/mobo) of our code repository is written in a clean and modular way, facilitating extensions and tailoring the code, serving as a testbed for machine learning researchers to easily develop and evaluate their own multi-objective Bayesian optimization algorithms. We are looking forward to supporting more powerful optimization algorithms on our platform.
-
-## Contact
-
-If you experience any issues during installing or using the software, or if you want to contribute to AutoOED, please feel free to reach out to us either by creating issues on GitHub or sending emails to autooed@csail.mit.edu.
+# Utilizing Multi-Objective Bayesian Optimization
+The adopted approach is based on the Thompson sampling multi-objective Bayesian optimization method, as detailed in the article "Bradford et al., Journal of Global Optimization volume 71, pages 407–438 (2018)". The overarching objective is to leverage the capabilities of MOBO to fine-tune the ratios of the three monomers, ultimately achieving an optimized balance between Tensile Strength and Toughness in the 3D printed thermoplastics.
