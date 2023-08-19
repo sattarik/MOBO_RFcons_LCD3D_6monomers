@@ -1,3 +1,6 @@
+# big saved np files
+*.npy
+
 .vscode/
 .DS_Store
 
