@@ -1,4 +1,4 @@
-![image](https://github.com/sattarik/MOBO_RFcons_LCD3D_6monomers/assets/54645299/214488c8-d91f-4092-9e11-5283b283909b)# Multi-Objective Bayesian Optimization for 3D Printing of Thermoplastics
+# Multi-Objective Bayesian Optimization for 3D Printing of Thermoplastics
 This repository is an adaptation of the original code from AutoOED available at: AutoOED GitHub. The code has been tailored by Kianoosh Sattari to accommodate MOBO (Multi-Objective Bayesian Optimization) for optimizing the 3D printing process of thermoplastics using mixed inks containing 6 monomers: R1(HA)	R2(IA)	R3(NVP)	R4(AA)	R5(HEAA)	R6(IBOA)
 
 # Modifications and Objectives
