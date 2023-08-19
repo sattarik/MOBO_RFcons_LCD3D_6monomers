@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from mpl_toolkits.mplot3d import Axes3D
 from pymoo.factory import get_performance_indicator
+
 import matplotlib as mpl
 from autooed.utils.pareto import convert_minimization
 
@@ -40,6 +41,37 @@ def plot_performance_space(Y):
     plt.title('Performance Space')
     plt.show()
 
+"""
+def plot_performance_metric(Y, obj_type):
+    '''
+    '''
+    if Y.shape[1] == 1:
+        opt_list = []
+        if obj_type == ['min']:
+            opt_func = np.min
+        elif obj_type == ['max']:
+            opt_func == np.max
+        else:
+            raise Exception(f'Invalid objective type {obj_type}')
+        for i in range(1, len(Y)):
+            opt_list.append(opt_func(Y[:i]))
+        plt.plot(np.arange(1, len(Y)), opt_list)
+        plt.title('Optimum')
+    elif Y.shape[1] > 1:
+        Y = convert_minimization(Y, obj_type)
+        ref_point = np.max(Y, axis=0)
+        indicator = get_performance_indicator('hv', ref_point=ref_point)
+        hv_list = []
+        for i in range(1, len(Y)):
+            hv = indicator.calc(Y[:i])
+            hv_list.append(hv)
+        plt.plot(np.arange(1, len(Y)), hv_list)
+        plt.title('Hypervolume')
+    else:
+        raise Exception(f'Invalid objective dimension {Y.shape[1]}')
+    plt.show()
+"""
+
 def plot_performance_space_diffcolor(Y0, Y_eval):
     '''
     '''
@@ -73,10 +105,10 @@ def plot_performance_metric(Y, obj_type):
     '''
     '''
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.tick_params(direction='in', length=4, width=1.5, colors='black', grid_alpha=0, labelsize='1')
-    ax.set_xlabel('Iterations', fontsize='18', fontname='Arial', fontweight='bold')
-    ax.set_ylabel('Hypervolume', fontsize='18', fontname='Arial', fontweight='bold')
-    fig, ax = plt.subplots(figsize=(6,4))
+    [i.set_linewidth(2) for i in ax.spines.values()]
+    ax.tick_params(length=4, width=2, colors='black', grid_alpha=0, labelsize='15')
+    ax.set_xlabel('Sample ID', fontsize='20', fontname='Arial', fontweight='bold')
+    ax.set_ylabel('Hypervolume', fontsize='20', fontname='Arial', fontweight='bold')
     if Y.shape[1] == 1:
         opt_list = []
         if obj_type == ['min']:
@@ -98,15 +130,10 @@ def plot_performance_metric(Y, obj_type):
             hv = indicator.calc(Y[:i])
             hv_list.append(hv)
         
-        plt.plot(np.arange(1, len(Y)), hv_list, linewidth=5)
-        #plt.title('HVE0')
+        plt.plot(np.arange(1, len(Y)), hv_list, linewidth=2)
+        #plt.title('HVE', fontsize=18)
     else:
         raise Exception(f'Invalid objective dimension {Y.shape[1]}')
     mpl.rcParams['axes.linewidth'] = 2
-    ax.set_xlabel('Iterations', fontsize='18', fontname='Arial', fontweight='bold')
-    ax.set_ylabel('Hypervolume', fontsize='18', fontname='Arial', fontweight='bold')   
-    ax.tick_params(axis='both', labelsize=15)
-    ax.xaxis.set_tick_params(width=5)
-    ax.yaxis.set_tick_params(width=5)
     plt.tight_layout()
     plt.savefig('HVE.png', dpi=300)

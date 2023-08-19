@@ -37,8 +37,6 @@ from numpy import std
 
 from warnings import catch_warnings
 from warnings import simplefilter
-
-
 from autooed.utils.sampling import lhs
 import random
 #import xgboost as xgb
@@ -182,7 +180,7 @@ def get_general_args(args=None):
         help='size of the batch in optimization')
     parser.add_argument('--n-init-sample', type=int, default=0, 
         help='number of initial design samples')
-    parser.add_argument('--n-total-sample', type=int, default=250, 
+    parser.add_argument('--n-total-sample', type=int, default=44, 
         help='number of total design samples (budget)')
 
     args, _ = parser.parse_known_args(args)

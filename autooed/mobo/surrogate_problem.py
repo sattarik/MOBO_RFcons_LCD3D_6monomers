@@ -138,6 +138,7 @@ class SurrogateProblem(Problem):
             CV = np.zeros([X.shape[0], 1])
         else:
             CV = Problem.calc_constraint_violation(out["G"])
+            print (CV)
 
         if "CV" in return_values_of:
             out["CV"] = CV
