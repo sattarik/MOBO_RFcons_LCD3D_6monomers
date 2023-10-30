@@ -107,7 +107,7 @@ def plot_performance_metric(Y, obj_type):
     fig, ax = plt.subplots(figsize=(5, 4))
     [i.set_linewidth(2) for i in ax.spines.values()]
     ax.tick_params(length=4, width=2, colors='black', grid_alpha=0, labelsize='15')
-    ax.set_xlabel('Sample ID', fontsize='20', fontname='Arial', fontweight='bold')
+    ax.set_xlabel('Itaration #', fontsize='20', fontname='Arial', fontweight='bold')
     ax.set_ylabel('Hypervolume', fontsize='20', fontname='Arial', fontweight='bold')
     if Y.shape[1] == 1:
         opt_list = []
@@ -123,7 +123,7 @@ def plot_performance_metric(Y, obj_type):
         plt.title('Optimum')
     elif Y.shape[1] > 1:
         Y = convert_minimization(Y, obj_type)
-        ref_point = np.max(Y, axis=0)
+        ref_point = [0, 0]
         indicator = get_performance_indicator('hv', ref_point=ref_point)
         hv_list = []
         for i in range(1, len(Y)):
@@ -135,5 +135,7 @@ def plot_performance_metric(Y, obj_type):
     else:
         raise Exception(f'Invalid objective dimension {Y.shape[1]}')
     mpl.rcParams['axes.linewidth'] = 2
+    plt.xticks(np.arange(0, 73, 12))
+    plt.yticks(np.arange(0, 801, 200))
     plt.tight_layout()
     plt.savefig('HVE.png', dpi=300)
