@@ -107,7 +107,7 @@ def plot_performance_metric(Y, obj_type):
     fig, ax = plt.subplots(figsize=(5, 4))
     [i.set_linewidth(2) for i in ax.spines.values()]
     ax.tick_params(length=4, width=2, colors='black', grid_alpha=0, labelsize='15')
-    ax.set_xlabel('Itaration #', fontsize='20', fontname='Arial', fontweight='bold')
+    ax.set_xlabel('Sample ID', fontsize='20', fontname='Arial', fontweight='bold')
     ax.set_ylabel('Hypervolume', fontsize='20', fontname='Arial', fontweight='bold')
     if Y.shape[1] == 1:
         opt_list = []
