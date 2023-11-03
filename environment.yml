@@ -1,4 +1,4 @@
-name: my-rdkit-env
+name: pimobo_env
 channels:
   - conda-forge
   - defaults
@@ -235,4 +235,3 @@ dependencies:
     - xlrd==2.0.1
     - xlsxwriter==3.0.3
     - zipp==3.7.0
-prefix: /home/kianoosh/anaconda3/envs/my-rdkit-env

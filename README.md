@@ -1,6 +1,5 @@
-[![Python 3.7](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) 
+[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) 
 
-# kia is here
 ## Multi-Objective Bayesian Optimization with physics-informed descriptors for 3D Printing of Thermoplastics
 
 ### Overview
@@ -34,12 +33,10 @@ Our approach is grounded in the Thompson sampling multi-objective Bayesian optim
 ### How-to
 To install, just clone our repo:
 ```
-git clone https://github.com/aspuru-guzik-group/ORGANIC.git
+git clone https://github.com/sattarik/MOBO_RFcons_LCD3D_6monomers.git
 ```
 ### Requirements
 
-- tensorflow==1.2
-- future==0.16.0
 - rdkit
 - keras
 - numpy
