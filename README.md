@@ -1,6 +1,4 @@
-![[![Python 3.7](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) 
-
-![Platform](https://img.shields.io/badge/platform-windows|macos|linux-lightgrey) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) 
+[![Python 3.7](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) 
 ** Multi-Objective Bayesian Optimization for 3D Printing of Thermoplastics **
 This repository is an adaptation of the original code from AutoOED available at: AutoOED GitHub. 
 The code has been tailored by Kianoosh Sattari to accommodate MOBO (Multi-Objective Bayesian Optimization) for optimizing the 3D printing process of thermoplastics using mixed inks containing 6 monomers: R1(HA)	R2(IA)	R3(NVP)	R4(AA)	R5(HEAA)	R6(IBOA).
