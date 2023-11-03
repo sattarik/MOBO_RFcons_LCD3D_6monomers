@@ -1,9 +1,14 @@
 # Multi-Objective Bayesian Optimization for 3D Printing of Thermoplastics
-This repository is an adaptation of the original code from AutoOED available at: AutoOED GitHub. The code has been tailored by Kianoosh Sattari to accommodate MOBO (Multi-Objective Bayesian Optimization) for optimizing the 3D printing process of thermoplastics using mixed inks containing 6 monomers: R1(HA)	R2(IA)	R3(NVP)	R4(AA)	R5(HEAA)	R6(IBOA)
+This repository is an adaptation of the original code from AutoOED available at: AutoOED GitHub. 
+The code has been tailored by Kianoosh Sattari to accommodate MOBO (Multi-Objective Bayesian Optimization) for optimizing the 3D printing process of thermoplastics using mixed inks containing 6 monomers: R1(HA)	R2(IA)	R3(NVP)	R4(AA)	R5(HEAA)	R6(IBOA)
 
 # Modifications and Objectives
 The codebase was adjusted to handle the intricate process of 3D printing thermoplastics with mixed inks of the 6 aforementioned monomers. 
-Three constraints were added to handle Sum(R1-R5)<=1, the printability, and Tg range of the suggested monomers. 
+Three constraints were added:
+1) Constraint on the input design space to handle Sum(R1-R5)<=1, The last ratio for experimental evaluation R6 = 1-ΣRi
+2) Printability, A RF classifier with inputs of structural and physics-informed descriptors of the input monomers and (0/1) output
+3) Tg range of the suggested monomers. A RF classifier with inputs of structural and physics-informed descriptors of the input monomers and (0/1) output.
+   Class 1: Acceptable range of Tg is [10-60] °C.
 
 The primary objectives of this optimization were to enhance two crucial mechanical properties: Tensile Strength and Toughness, both evaluated under a tensile test. Notably, these objectives are inherently in conflict with each other, and no explicit function exists that establishes a direct relationship between the monomer ratios and the final mechanical properties.
 
