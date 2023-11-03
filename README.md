@@ -4,12 +4,12 @@ Multi-Objective Bayesian Optimization for 3D Printing of Thermoplastics
 
 Welcome to our Multi-Objective Bayesian Optimization (MOBO) project for enhancing the 3D printing of thermoplastics. This repository is an adaptation of the original code from AutoOED, available at AutoOED GitHub, and has been tailored by Kianoosh Sattari to accommodate MOBO for optimizing the 3D printing process of thermoplastics using mixed inks containing six monomers:
 
-    R1 (HA)
-    R2 (IA)
-    R3 (NVP)
-    R4 (AA)
-    R5 (HEAA)
-    R6 (IBOA)
+* R1 (HA)
+    * R2 (IA)
+    * R3 (NVP)
+    * R4 (AA)
+    * R5 (HEAA)
+    * R6 (IBOA)
 
 Our research results are publicly available on ChemRxiv via the following link. Additionally, we are under review for publication in Nature Communications.
 Modifications and Objectives
