@@ -32,13 +32,9 @@ Our approach is grounded in the Thompson sampling multi-objective Bayesian optim
 ## Installation
 ### How-to
 To install, just clone our repo:
-
 ```
 git clone https://github.com/aspuru-guzik-group/ORGANIC.git
 ```
-
-And, it is done!
-
 ### Requirements
 
 - tensorflow==1.2
