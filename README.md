@@ -42,11 +42,9 @@ Please follow the Version of the packages mentioned in the “.yml”file.
 
 ## How to use
 
-? has been carefully designed to be simple, while still allowing full customization of every parameter in the models. Have a look at a minimal example of our code:
+### 'Main_optimization_loop.ipynb' in the main repo is to run the main loop of optimization. 
 
-```python
-model = ORGANIC('OPVs')                     # Loads a ORGANIC with name 'OPVs'
-model.load_training_set('opv.smi')          # Loads the training set (molecules encoded as SMILES)
-model.set_training_program(['PCE'], [50])   # Sets the training program as 50 epochs with the PCE metric
-model.load_metrics()                        # Loads all the metrics
-model.train()  
+### '/autooed/problem/predefined/printing3d.py' 
+To customize the problem for a different one, one need to change the following file: 
+/autooed/problem/predefined/printing3d.py
+There, one can define the problem and change the constraints definition. 
