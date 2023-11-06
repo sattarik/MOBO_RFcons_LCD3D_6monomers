@@ -43,10 +43,10 @@ git clone https://github.com/sattarik/MOBO_RFcons_LCD3D_6monomers.git
 Please follow the Version of the packages mentioned in the “.yml”file. 
 
 ## How to use
-Main_optimization_loop.ipynb in the main folder is used to run the main loop of optimization.
+"Main_optimization_loop.ipynb" in the main folder is used to run the main loop of optimization.
 
 To customize the problem, one needs to change the following file:
-/autooed/problem/predefined/printing3d.py
+"/autooed/problem/predefined/printing3d.py"
 
 After running the Main_optimization_loop.ipynb, the code will recommend 2 sets of monomer ratios. The user needs to input the results of tensile strength and toughness, also whether it is printable or not, and Tg value. If the ratio is not printable, the user needs to put 0 for both strength and toughness, and 0 for printability. For Tg in the case of non-printable sets of monomers, one needs to put a large number outside the 60 °C range to show unsatisfactory Tg sample.
 
