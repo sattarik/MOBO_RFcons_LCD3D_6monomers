@@ -4,6 +4,9 @@
 
 
 ## Overview
+
+![Scheme of the prediction model](https://github.com/sattarik/MOBO_RFcons_LCD3D_6monomers/blob/master/Algorithm.jpg)
+
 Welcome to our Multi-Objective Bayesian Optimization (MOBO) project for enhancing the 3D printing of thermoplastics. This repository is an adaptation of the original code from AutoOED, available at [AutoOED GitHub](https://github.com/autooed/autooed), and has been tailored by Kianoosh Sattari to accommodate MOBO for optimizing the 3D printing process of thermoplastics using mixed inks containing six monomers:
 
 - R1 (HA)
