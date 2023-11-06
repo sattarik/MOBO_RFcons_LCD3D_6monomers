@@ -98,7 +98,7 @@ class printing3d_dlp(printing3d):
         g1 = x1 + x2 + x3 + x4 + x5 -1
         x_ = x_.reshape(1, -1)
         
-        df = pd.read_csv('./printability_Tg.csv')
+        df = pd.read_csv('./Datasets/printability_Tg.csv')
         Printability = np.asarray (df['Printability']).reshape(1,-1)
         Y0 = Printability.T
         Y = Y0
@@ -123,7 +123,7 @@ class printing3d_dlp(printing3d):
                              D_Ratio.T, E_Ratio.T, F_Ratio.T), axis=1)
 
         # load monomers descriptors
-        df = pd.read_csv('monomers_info.csv')
+        df = pd.read_csv('./Datasets/monomers_info.csv')
         energy = np.array (-df['dft_sp_E_RB3LYP'])
         pol_area = np.array (df['polar_surface_area'])
         complexity = np.array (df['complexity'])
