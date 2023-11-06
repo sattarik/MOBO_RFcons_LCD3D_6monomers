@@ -142,8 +142,8 @@ class printing3d_dlp(printing3d):
         X = np.concatenate ((X_energy, X_complexity, X_HAMW, 
                     X_solubility_d, X_solubility_h, X_solubility_p), axis=1)
 
-        RF_print = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
-        RF_Tg =    RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0)
+        RF_print = RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0, criterion='gini')
+        RF_Tg =    RandomForestClassifier(max_depth=5, n_estimators=50, random_state=0, criterion='gini')
 
         RF_print.fit(X, Y)
         RF_Tg.fit(X, Tg_group)

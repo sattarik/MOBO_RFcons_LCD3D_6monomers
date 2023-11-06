@@ -138,4 +138,4 @@ def plot_performance_metric(Y, obj_type):
     plt.xticks(np.arange(0, 73, 12))
     plt.yticks(np.arange(0, 801, 200))
     plt.tight_layout()
-    plt.savefig('HVE.png', dpi=300)
+    plt.savefig('./Figures/HVE.png', dpi=300)

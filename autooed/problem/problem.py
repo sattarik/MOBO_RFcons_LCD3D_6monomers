@@ -95,7 +95,7 @@ class Problem(PymooProblem):
         if self.n_constr == 0:
             CV = np.zeros([x.shape[0], 1])
         else:
-            print ("x_", x[1])
+            #print ("x_", x[1])
             G = [self.evaluate_constraint(x_) for x_ in x]
             assert None not in G, 'constraint evaluation function is invalid'
             CV = Problem.calc_constraint_violation(np.column_stack(np.atleast_2d(G)))

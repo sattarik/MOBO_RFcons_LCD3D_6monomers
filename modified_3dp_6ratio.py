@@ -140,7 +140,7 @@ X = np.concatenate ((X_energy, X_complexity, X_HAMW,
 # got more information about input varialbe may reduce the accuracy for 
 # few samples, but it is informative for new samples.
 # The hyperparameters are fixed using one-leave-out in file "leavout_CV_RF_printability_Tg.ipynb"
-RF_print = RandomForestClassifier(random_state=0, 
+RF_print = RandomForestClassifier(random_state=0, criterion="gini",
                                   max_depth = 5, 
                                   n_estimators = 50)
 RF_print.fit(X, Y)
@@ -148,7 +148,7 @@ Yhat = RF_print.predict(X)
 acc = accuracy_score(Y, Yhat)
 print('Accuracy: %.3f' % acc)
 #print (RF_print.get_params(deep=True))
-RF_Tg = RandomForestClassifier(random_state=0, 
+RF_Tg = RandomForestClassifier(random_state=0, criterion="gini",
                                   max_depth = 5, 
                                   n_estimators = 50)
 RF_Tg.fit(X, Tg_group)

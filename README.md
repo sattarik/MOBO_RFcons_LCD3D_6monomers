@@ -37,17 +37,12 @@ git clone https://github.com/sattarik/MOBO_RFcons_LCD3D_6monomers.git
 ```
 ### Requirements
 
-- rdkit
-- keras
-- numpy
-- scipy
-- pandas
-- tqdm
-- pymatgen
+‘environment.yml’ contains all the necessary installation. 
+Please follow the Version of the packages mentioned in the “.yml”file. 
 
 ## How to use
 
-ORGANIC has been carefully designed to be simple, while still allowing full customization of every parameter in the models. Have a look at a minimal example of our code:
+? has been carefully designed to be simple, while still allowing full customization of every parameter in the models. Have a look at a minimal example of our code:
 
 ```python
 model = ORGANIC('OPVs')                     # Loads a ORGANIC with name 'OPVs'
